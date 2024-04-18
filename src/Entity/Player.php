@@ -10,13 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
 class Player
 {
-    const GENDER_MAN = 'man';
-    const GENDER_WOMAN = 'woman';
-
-    const SKILL_BEGINNER = 'beginner';
-    const SKILL_MIDDLE = 'middle';
-    const SKILL_HIGH = 'high';
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -28,17 +21,17 @@ class Player
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastname = null;
 
-    #[ORM\Column(type: "string", columnDefinition: "ENUM('man', 'woman')")]
-    private ?string $gender = null;
-
-    #[ORM\Column(type: "string", columnDefinition: "ENUM('beginner', 'middle', 'high')")]
-    private ?string $skill = null;
-
     /**
      * @var Collection<int, Tournament>
      */
     #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'playersAvailable')]
     private Collection $tournaments;
+
+    #[ORM\ManyToOne(inversedBy: 'players')]
+    private ?Gender $gender = null;
+
+    #[ORM\ManyToOne(inversedBy: 'players')]
+    private ?Skill $skill = null;
 
     public function __construct()
     {
@@ -74,36 +67,6 @@ class Player
         return $this;
     }
 
-    public function getGender(): ?string
-    {
-        return $this->gender;
-    }
-
-    public function setGender(string $gender): static
-    {
-        if (!in_array($gender, array(self::GENDER_MAN, self::GENDER_WOMAN))) {
-            throw new \InvalidArgumentException("Invalid status");
-        }
-        $this->gender = $gender;
-
-        return $this;
-    }
-
-    public function getSkill(): ?string
-    {
-        return $this->skill;
-    }
-
-    public function setSkill(string $skill): static
-    {
-        if (!in_array($skill, array(self::SKILL_BEGINNER, self::SKILL_MIDDLE, self::SKILL_HIGH))) {
-            throw new \InvalidArgumentException("Invalid status");
-        }
-        $this->skill = $skill;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Tournament>
      */
@@ -127,6 +90,30 @@ class Player
         if ($this->tournaments->removeElement($tournament)) {
             $tournament->removePlayersAvailable($this);
         }
+
+        return $this;
+    }
+
+    public function getGender(): ?Gender
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?Gender $gender): static
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getSkill(): ?Skill
+    {
+        return $this->skill;
+    }
+
+    public function setSkill(?Skill $skill): static
+    {
+        $this->skill = $skill;
 
         return $this;
     }
