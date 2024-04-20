@@ -33,9 +33,16 @@ class Player
     #[ORM\ManyToOne(inversedBy: 'players')]
     private ?Skill $skill = null;
 
+    /**
+     * @var Collection<int, EncounterPlayer>
+     */
+    #[ORM\OneToMany(targetEntity: EncounterPlayer::class, mappedBy: 'player', orphanRemoval: true)]
+    private Collection $encounterPlayers;
+
     public function __construct()
     {
         $this->tournaments = new ArrayCollection();
+        $this->encounterPlayers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -114,6 +121,36 @@ class Player
     public function setSkill(?Skill $skill): static
     {
         $this->skill = $skill;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, EncounterPlayer>
+     */
+    public function getEncounterPlayers(): Collection
+    {
+        return $this->encounterPlayers;
+    }
+
+    public function addEncounterPlayer(EncounterPlayer $encounterPlayer): static
+    {
+        if (!$this->encounterPlayers->contains($encounterPlayer)) {
+            $this->encounterPlayers->add($encounterPlayer);
+            $encounterPlayer->setPlayer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEncounterPlayer(EncounterPlayer $encounterPlayer): static
+    {
+        if ($this->encounterPlayers->removeElement($encounterPlayer)) {
+            // set the owning side to null (unless already changed)
+            if ($encounterPlayer->getPlayer() === $this) {
+                $encounterPlayer->setPlayer(null);
+            }
+        }
 
         return $this;
     }

@@ -18,19 +18,16 @@ class EncounterPlayer
     #[ORM\Column]
     private ?bool $isTeam1 = null;
 
-    /**
-     * @var Collection<int, Player>
-     */
-    #[ORM\ManyToMany(targetEntity: Player::class)]
-    private Collection $players;
-
-    #[ORM\ManyToOne(inversedBy: 'players')]
+    #[ORM\ManyToOne(inversedBy: 'encounterPlayers')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Encounter $encounter = null;
 
+    #[ORM\ManyToOne(inversedBy: 'encounterPlayers')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Player $player = null;
+
     public function __construct()
     {
-        $this->players = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -50,30 +47,6 @@ class EncounterPlayer
         return $this;
     }
 
-    /**
-     * @return Collection<int, Player>
-     */
-    public function getPlayers(): Collection
-    {
-        return $this->players;
-    }
-
-    public function addPlayer(Player $player): static
-    {
-        if (!$this->players->contains($player)) {
-            $this->players->add($player);
-        }
-
-        return $this;
-    }
-
-    public function removePlayer(Player $player): static
-    {
-        $this->players->removeElement($player);
-
-        return $this;
-    }
-
     public function getEncounter(): ?Encounter
     {
         return $this->encounter;
@@ -82,6 +55,18 @@ class EncounterPlayer
     public function setEncounter(?Encounter $encounter): static
     {
         $this->encounter = $encounter;
+
+        return $this;
+    }
+
+    public function getPlayer(): ?Player
+    {
+        return $this->player;
+    }
+
+    public function setPlayer(?Player $player): static
+    {
+        $this->player = $player;
 
         return $this;
     }
