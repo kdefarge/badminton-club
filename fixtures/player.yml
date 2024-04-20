@@ -1,0 +1,15 @@
+
+App\Entity\Gender:
+  gender_{man, woman}:
+    name: <current()>
+
+App\Entity\Skill:
+  skill_{beginner, middle, high}:
+    name: <current()>
+
+App\Entity\Player:
+  player_{1..60}:
+    firstname: <firstName()>
+    lastname: <lastName()>
+    gender: '@gender_*'
+    skill: '@skill_*'

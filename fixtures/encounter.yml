@@ -1,0 +1,76 @@
+App\Entity\Encounter:
+  encounter_{1..10}:
+    setFinished: false
+    setTeam1Won: null
+    createdAt: '<dateTimeInInterval("-200 days", "-50 days", "Europe/Paris")>'
+    updatedAt: null
+  encounter_t1won_{1..10}:
+    setFinished: true
+    setTeam1Won: false
+    createdAt: '<dateTimeInInterval("-200 days", "-50 days", "Europe/Paris")>'
+    updatedAt: '<dateTimeInInterval($createdAt, "-1 days", "Europe/Paris")>'
+  encounter_t1won_2set_{1..10}:
+    setFinished: true
+    setTeam1Won: false
+    createdAt: '<dateTimeInInterval("-200 days", "-50 days", "Europe/Paris")>'
+    updatedAt: '<dateTimeInInterval($createdAt, "-1 days", "Europe/Paris")>'
+  encounter_t2won_{1..10}:
+    setFinished: true
+    setTeam1Won: true
+    createdAt: '<dateTimeInInterval("-200 days", "-50 days", "Europe/Paris")>'
+    updatedAt: '<dateTimeInInterval($createdAt, "-1 days", "Europe/Paris")>'
+  encounter_t2won_2set_{1..10}:
+    setFinished: true
+    setTeam1Won: true
+    createdAt: '<dateTimeInInterval("-200 days", "-50 days", "Europe/Paris")>'
+    updatedAt: '<dateTimeInInterval($createdAt, "-1 days", "Europe/Paris")>'
+
+App\Entity\EncounterPlayer:
+  encounterPlayer_1member_{@encounter_*}:
+    encounter: <current()>
+    player: '@player_<numberBetween(1, 15)>'
+    setTeam1: false
+  encounterPlayer_2member_{@encounter_*}:
+    encounter: <current()>
+    player: '@player_<numberBetween(16, 30)>'
+    setTeam1: true
+  encounterPlayer_3member_{@encounter_*}:
+    encounter: <current()>
+    player: '@player_<numberBetween(31, 45)>'
+    setTeam1: false
+  encounterPlayer_4member_{@encounter_*}:
+    encounter: <current()>
+    player: '@player_<numberBetween(46, 60)>'
+    setTeam1: true
+
+App\Entity\EncounterSetResult:
+  encounterSetResult_{@encounter_t1won_*}:
+    encounter: <current()>
+    number: 1
+    scoreTeam1: 21
+    scoreTeam2: <numberBetween(0, 19)>
+  encounterSetResult_{@encounter_t1won_2set_*}:
+    encounter: <current()>
+    number: 1
+    scoreTeam1: 21
+    scoreTeam2: <numberBetween(0, 19)>
+  encounterSetResult2_{@encounter_t1won_2set_*}:
+    encounter: <current()>
+    number: 2
+    scoreTeam1: 21
+    scoreTeam2: <numberBetween(0, 19)>
+  encounterSetResult_{@encounter_t2won_*}:
+    encounter: <current()>
+    number: 1
+    scoreTeam1: <numberBetween(0, 19)>
+    scoreTeam2: 21
+  encounterSetResult_{@encounter_t2won_2set_*}:
+    encounter: <current()>
+    number: 1
+    scoreTeam1: <numberBetween(0, 19)>
+    scoreTeam2: 21
+  encounterSetResult2_{@encounter_t2won_2set_*}:
+    encounter: <current()>
+    number: 2
+    scoreTeam1: <numberBetween(0, 19)>
+    scoreTeam2: 21
