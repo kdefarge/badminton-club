@@ -33,14 +33,14 @@ class Encounter
     #[ORM\OneToMany(targetEntity: EncounterSetResult::class, mappedBy: 'encounter', orphanRemoval: true)]
     private Collection $setResults;
 
+    #[ORM\ManyToOne(inversedBy: 'encounters')]
+    private ?Tournament $tournament = null;
+
     /**
      * @var Collection<int, EncounterPlayer>
      */
     #[ORM\OneToMany(targetEntity: EncounterPlayer::class, mappedBy: 'encounter', orphanRemoval: true)]
     private Collection $encounterPlayers;
-
-    #[ORM\ManyToOne(inversedBy: 'encounters')]
-    private ?Tournament $tournament = null;
 
     public function __construct()
     {
@@ -131,15 +131,27 @@ class Encounter
         return $this;
     }
 
+    public function getTournament(): ?Tournament
+    {
+        return $this->tournament;
+    }
+
+    public function setTournament(?Tournament $tournament): static
+    {
+        $this->tournament = $tournament;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, EncounterPlayer>
      */
-    public function getPlayers(): Collection
+    public function getEncounterPlayers(): Collection
     {
         return $this->encounterPlayers;
     }
 
-    public function addPlayer(EncounterPlayer $encounterPlayer): static
+    public function addEncounterPlayer(EncounterPlayer $encounterPlayer): static
     {
         if (!$this->encounterPlayers->contains($encounterPlayer)) {
             $this->encounterPlayers->add($encounterPlayer);
@@ -149,7 +161,7 @@ class Encounter
         return $this;
     }
 
-    public function removePlayer(EncounterPlayer $encounterPlayer): static
+    public function removeEncounterPlayer(EncounterPlayer $encounterPlayer): static
     {
         if ($this->encounterPlayers->removeElement($encounterPlayer)) {
             // set the owning side to null (unless already changed)
@@ -157,18 +169,6 @@ class Encounter
                 $encounterPlayer->setEncounter(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getTournament(): ?Tournament
-    {
-        return $this->tournament;
-    }
-
-    public function setTournament(?Tournament $tournament): static
-    {
-        $this->tournament = $tournament;
 
         return $this;
     }
