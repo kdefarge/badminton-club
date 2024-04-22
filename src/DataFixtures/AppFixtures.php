@@ -6,6 +6,7 @@ use App\Config\PlayerGender;
 use App\Config\PlayerSkill;
 use App\Entity\Encounter;
 use App\Entity\EncounterPlayer;
+use App\Entity\EncounterSetResult;
 use App\Entity\Gender;
 use App\Entity\Player;
 use App\Entity\Skill;
@@ -82,6 +83,21 @@ class AppFixtures extends Fixture
                 $encounterPlayer->setTeam1($u % 2 != 0);
                 $encounterPlayer->setEncounter($encounter);
                 $manager->persist($encounterPlayer);
+            }
+
+            if ($encounter->isFinished()) {
+                $nombreDeSet = $faker->numberBetween(1, 3);
+                for ($u = 0; $u < $nombreDeSet; $u++) {
+                    $encounterSetResult = new EncounterSetResult();
+                    $encounterSetResult->setEncounter($encounter);
+                    $encounterSetResult->setNumber($u + 1);
+                    $scoreLoser = $faker->numberBetween(1, 29);
+                    $scoreWinner = $scoreLoser > 19 ? ($scoreLoser == 29 ? 30 : $scoreLoser + 2) : 21;
+                    $isTeam1Won = $encounter->isTeam1Won() || ($nombreDeSet == 3 && $u == 1);
+                    $encounterSetResult->setScoreTeam1($isTeam1Won ? $scoreWinner : $scoreLoser);
+                    $encounterSetResult->setScoreTeam2(!$isTeam1Won ? $scoreWinner : $scoreLoser);
+                    $manager->persist($encounterSetResult);
+                }
             }
         }
 
