@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 use App\Config\PlayerGender;
 use App\Config\PlayerSkill;
 use App\Entity\Encounter;
+use App\Entity\EncounterPlayer;
 use App\Entity\Gender;
 use App\Entity\Player;
 use App\Entity\Skill;
@@ -59,7 +60,7 @@ class AppFixtures extends Fixture
             $players[] = $player;
         }
 
-        // Create of 60 encounters
+        // Create of 60 encounters with 2 or 4 random players
 
         for ($i = 0; $i < 60; $i++) {
 
@@ -73,8 +74,15 @@ class AppFixtures extends Fixture
             }
             $manager->persist($encounter);
 
-            /** @var Player $gender */
-            $encounterPlayers = $faker->randomElements($players, 4);
+            $playersToAdd = $faker->randomElements($players, $faker->boolean() ? 2 : 4);
+
+            for ($u = 0; $u < count($playersToAdd); $u++) {
+                $encounterPlayer = new EncounterPlayer();
+                $encounterPlayer->setPlayer($playersToAdd[$u]);
+                $encounterPlayer->setTeam1($u % 2 != 0);
+                $encounterPlayer->setEncounter($encounter);
+                $manager->persist($encounterPlayer);
+            }
         }
 
         $manager->flush();
