@@ -8,16 +8,20 @@
     <table class="table">
         <tbody>
             <tr>
-                <th>Id</th>
-                <td>{{ player.id }}</td>
-            </tr>
-            <tr>
                 <th>Firstname</th>
                 <td>{{ player.firstname }}</td>
             </tr>
             <tr>
                 <th>Lastname</th>
                 <td>{{ player.lastname }}</td>
+            </tr>
+            <tr>
+                <th>Sexe</th>
+                <td>{{ player.gender ? player.gender.name }}</td>
+            </tr>
+            <tr>
+                <th>Niveau</th>
+                <td>{{ player.skill ? player.skill.name }}</td>
             </tr>
         </tbody>
     </table>

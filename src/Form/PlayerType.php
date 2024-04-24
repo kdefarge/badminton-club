@@ -18,19 +18,6 @@ class PlayerType extends AbstractType
         $builder
             ->add('firstname')
             ->add('lastname')
-            ->add('tournaments', EntityType::class, [
-                'class' => Tournament::class,
-                'choice_label' => 'id',
-                'multiple' => true,
-            ])
-            ->add('gender', EntityType::class, [
-                'class' => Gender::class,
-                'choice_label' => 'id',
-            ])
-            ->add('skill', EntityType::class, [
-                'class' => Skill::class,
-                'choice_label' => 'id',
-            ])
         ;
     }
 
