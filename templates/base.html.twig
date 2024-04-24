@@ -12,6 +12,14 @@
         {% endblock %}
     </head>
     <body>
+        <ul class="menu">
+            <li>
+                <a href="{{ path('homepage') }}">Accueil</a>
+            </li>
+            <li>
+                <a href="{{ path('app_player_index') }}">Gestion des joueurs</a>
+            </li>
+        </ul>
         {% block body %}{% endblock %}
     </body>
 </html>
