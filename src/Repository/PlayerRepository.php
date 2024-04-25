@@ -21,28 +21,25 @@ class PlayerRepository extends ServiceEntityRepository
         parent::__construct($registry, Player::class);
     }
 
-    //    /**
-    //     * @return Player[] Returns an array of Player objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findAllJoined(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->select(['u','g','s'])
+            ->leftJoin('u.gender', 'g')
+            ->leftJoin('u.skill', 's')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Player
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findOneByID($id): ?Player
+    {
+        return $this->createQueryBuilder('u')
+            ->select(['u','g','s'])
+            ->andWhere('u.id = :id')
+            ->setParameter('id', $id)
+            ->leftJoin('u.gender', 'g')
+            ->leftJoin('u.skill', 's')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
