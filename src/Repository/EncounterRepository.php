@@ -21,28 +21,27 @@ class EncounterRepository extends ServiceEntityRepository
         parent::__construct($registry, Encounter::class);
     }
 
-    //    /**
-    //     * @return Encounter[] Returns an array of Encounter objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function findAllJoined(): array
+    {
+        return $this->createQueryBuilder('e')
+            ->select(['e','ep','p','r'])
+            ->leftJoin('e.encounterPlayers', 'ep')
+            ->join('ep.player', 'p')
+            ->leftJoin('e.setResults', 'r')
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Encounter
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findOneJoinedByID($id): ?Encounter
+    {
+        return $this->createQueryBuilder('e')
+            ->select(['e','ep','p','r'])
+            ->andWhere('e.id = :id')
+            ->setParameter('id', $id)
+            ->leftJoin('e.encounterPlayers', 'ep')
+            ->join('ep.player', 'p')
+            ->leftJoin('e.setResults', 'r')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

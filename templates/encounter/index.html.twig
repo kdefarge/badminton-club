@@ -4,26 +4,33 @@
 
 {% block body %}
     <h1>Encounter index</h1>
+    <h2>nombre: {{ encounters|length }}</h2>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>IsFinished</th>
-                <th>IsTeam1Won</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
+                <th>Name</th>
+                <th>Scores</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for encounter in encounters %}
             <tr>
-                <td>{{ encounter.id }}</td>
-                <td>{{ encounter.isFinished ? 'Yes' : 'No' }}</td>
-                <td>{{ encounter.isTeam1Won ? 'Yes' : 'No' }}</td>
-                <td>{{ encounter.createdAt ? encounter.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ encounter.updatedAt ? encounter.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>
+                    {% for encounterPlayer in encounter.EncounterPlayers %}
+                        {{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} - {{ encounterPlayer.isTeam1 }}<br />
+                    {% else %}
+                        pas de scores
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for setResult in encounter.setResults %}
+                        {{ setResult.scoreTeam1 }} - {{ setResult.scoreTeam2 }}<br />
+                    {% else %}
+                        pas de scores
+                    {% endfor %}
+                </td>
                 <td>
                     <a href="{{ path('app_encounter_show', {'id': encounter.id}) }}">show</a>
                     <a href="{{ path('app_encounter_edit', {'id': encounter.id}) }}">edit</a>

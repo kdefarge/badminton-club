@@ -16,6 +16,26 @@
                 <td>{{ encounter.isFinished ? 'Yes' : 'No' }}</td>
             </tr>
             <tr>
+                <th>joueurs</th>
+                <td>
+                    {% for encounterPlayer in encounter.EncounterPlayers %}
+                        {{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} - {{ encounterPlayer.isTeam1 }}<br />
+                    {% else %}
+                        pas de scores
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>resultats</th>
+                <td>
+                    {% for setResult in encounter.setResults %}
+                        {{ setResult.scoreTeam1 }} - {{ setResult.scoreTeam2 }}<br />
+                    {% else %}
+                        pas de scores
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
                 <th>IsTeam1Won</th>
                 <td>{{ encounter.isTeam1Won ? 'Yes' : 'No' }}</td>
             </tr>

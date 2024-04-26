@@ -18,7 +18,7 @@ class EncounterController extends AbstractController
     public function index(EncounterRepository $encounterRepository): Response
     {
         return $this->render('encounter/index.html.twig', [
-            'encounters' => $encounterRepository->findAll(),
+            'encounters' => $encounterRepository->findAllJoined(),
         ]);
     }
 
@@ -43,10 +43,10 @@ class EncounterController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_encounter_show', methods: ['GET'])]
-    public function show(Encounter $encounter): Response
+    public function show(int $id, EncounterRepository $encounterRepository): Response
     {
         return $this->render('encounter/show.html.twig', [
-            'encounter' => $encounter,
+            'encounter' => $encounterRepository->findOneJoinedByID($id),
         ]);
     }
 

@@ -93,7 +93,7 @@ class AppFixtures extends Fixture
                     $encounterSetResult->setNumber($u + 1);
                     $scoreLoser = $faker->numberBetween(1, 29);
                     $scoreWinner = $scoreLoser > 19 ? ($scoreLoser == 29 ? 30 : $scoreLoser + 2) : 21;
-                    $isTeam1Won = $encounter->isTeam1Won() || ($nombreDeSet == 3 && $u == 1);
+                    $isTeam1Won = ($nombreDeSet == 3 && $u == 1) ? !$encounter->isTeam1Won() : $encounter->isTeam1Won();
                     $encounterSetResult->setScoreTeam1($isTeam1Won ? $scoreWinner : $scoreLoser);
                     $encounterSetResult->setScoreTeam2(!$isTeam1Won ? $scoreWinner : $scoreLoser);
                     $manager->persist($encounterSetResult);
