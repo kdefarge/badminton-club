@@ -46,12 +46,41 @@ class EncounterSetResultController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_encounter_show', ['id' => $encounterSetResult->getEncounter()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_encounter_show', ['id' => $encounterSetResult->getEncounter()->getId()], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('encounter/edit.html.twig', [
-            'encounter' => $encounterSetResult->getEncounter(),
+        return $this->render('encounter_set_result/edit.html.twig', [
+            'encounter_set_result' => $encounterSetResult,
             'form' => $form,
         ]);
+    }
+
+    #[Route('/{id}', name: 'app_set_result_delete', methods: ['POST'])]
+    public function delete(Request $request, EncounterSetResult $encounterSetResult, EntityManagerInterface $entityManager, EncounterSetResultRepository $encounterSetResultRepository): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $encounterSetResult->getId(), $request->getPayload()->get('_token'))) {
+
+            $results = $encounterSetResultRepository->findBy(['encounter' => $encounterSetResult->getEncounter()], ['number' => 'ASC']);
+            $number = 0;
+
+            foreach ($results as $result) {
+
+                if ($encounterSetResult->getId() == $result->getId())
+                    continue;
+
+                $number++;
+
+                if ($result->getNumber() == $number)
+                    continue;
+
+                $result->setNumber($number);
+                $entityManager->persist($result);
+            }
+
+            $entityManager->remove($encounterSetResult);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('app_encounter_show', ['id' => $encounterSetResult->getEncounter()->getId()], Response::HTTP_SEE_OTHER);
     }
 }

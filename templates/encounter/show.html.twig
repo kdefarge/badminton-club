@@ -29,7 +29,7 @@
                 <th>resultats</th>
                 <td>
                     {% for setResult in encounter.setResults %}
-                        {{ setResult.scoreTeam1 }} - {{ setResult.scoreTeam2 }}<br />
+                        {{ setResult.scoreTeam1 }} - {{ setResult.scoreTeam2 }} [<a href="{{ path('app_set_result_edit', {'id': setResult.id}) }}">edit</a>]<br />
                     {% else %}
                         pas de scores
                     {% endfor %}
