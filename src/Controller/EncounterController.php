@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Encounter;
 use App\Entity\EncounterPlayer;
+use App\Form\EncounterPlayerType;
 use App\Form\EncounterType;
 use App\Repository\EncounterRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -34,11 +35,24 @@ class EncounterController extends AbstractController
         return $this->redirectToRoute('app_encounter_show', ['id' => $encounter->getId()], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}', name: 'app_encounter_show', methods: ['GET'])]
-    public function show(int $id, EncounterRepository $encounterRepository): Response
+    #[Route('/{id}', name: 'app_encounter_show', methods: ['GET', 'POST'])]
+    public function show(Request $request, int $id, EncounterRepository $encounterRepository, EntityManagerInterface $entityManager): Response
     {
+        $encounter = $encounterRepository->findOneJoinedByID($id);
+        $encounterPlayer = new EncounterPlayer();
+        $formEncounterPlayer = $this->createForm(EncounterPlayerType::class, $encounterPlayer);
+        $formEncounterPlayer->handleRequest($request);
+
+        if ($formEncounterPlayer->isSubmitted() && $formEncounterPlayer->isValid()) {
+            $encounterPlayer->setEncounter($encounter);
+            $entityManager->persist($encounterPlayer);
+            $entityManager->flush();
+            return $this->redirectToRoute('app_encounter_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('encounter/show.html.twig', [
-            'encounter' => $encounterRepository->findOneJoinedByID($id),
+            'encounter' => $encounter,
+            'form_encounter_player' => $formEncounterPlayer,
         ]);
     }
 
