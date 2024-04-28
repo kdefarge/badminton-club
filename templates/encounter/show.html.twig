@@ -22,7 +22,7 @@
                     EQUIPE 1
                     {% for encounterPlayer in encounter.EncounterPlayers %}
                         {% if encounterPlayer.isTeam1 %}
-                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} [<a href="{{ path('app_player_encounter_remove', {'id': encounterPlayer.id}) }}">X</a>]
+                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }}
                         {% endif %}
                     {% endfor %}
                 </td>
@@ -37,7 +37,7 @@
                     EQUIPE 2
                     {% for encounterPlayer in encounter.EncounterPlayers %}
                         {% if not encounterPlayer.isTeam1 %}
-                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} [<a href="{{ path('app_player_encounter_remove', {'id': encounterPlayer.id}) }}">X</a>]
+                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }}
                         {% endif %}
                     {% endfor %}
                 </td>
@@ -50,45 +50,22 @@
         </tbody>
     </table>
 
-<br />
-<br />
-
-{{ form_start(form_encounter_player) }}
-    {{ form_widget(form_encounter_player) }}
-    <button class="btn">{{ button_label|default('ajouté') }}</button>
-{{ form_end(form_encounter_player) }}
-
-<br />
-<br />
-
-{% include('score/_form.html.twig') with {'form': form_score} only %}
-
-<br />
-<br />
-<br />
-
-{{ form_start(form_encounter) }}
-    {{ form_widget(form_encounter) }}
-    <button class="btn">{{ button_label|default('sauvegardé') }}</button>
-{{ form_end(form_encounter) }}
-
-<br />
-<br />
-
     <table class="table">
         <tbody>
             <tr>
-                <th>Id</th>
+                <th>Identifiant</th>
                 <td>{{ encounter.id }}</td>
             </tr>
             <tr>
-                <th>IsFinished</th>
+                <th>Terminé ?</th>
                 <td>{{ encounter.isFinished ? 'Yes' : 'No' }}</td>
             </tr>
+            {% if encounter.isTeam1Won is not null %}
             <tr>
-                <th>IsTeam1Won</th>
-                <td>{{ encounter.isTeam1Won ? 'Yes' : 'No' }}</td>
+                <th>Gagnant ?</th>
+                <td>équipe {{ encounter.isTeam1Won ? '1' : '2' }}</td>
             </tr>
+            {% endif %}
             <tr>
                 <th>CreatedAt</th>
                 <td>{{ encounter.createdAt ? encounter.createdAt|date('Y-m-d H:i:s') : '' }}</td>
@@ -100,10 +77,11 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_encounter_index') }}">back to list</a>
-
-    <a href="{{ path('app_encounter_edit', {'id': encounter.id}) }}">edit</a>
-    <a href="{{ path('app_score_new', {'id': encounter.id}) }}">Ajouter score</a>
-
-    {{ include('encounter/_delete_form.html.twig') }}
+    <form method="get" action="{{ path('app_encounter_edit', {'id': encounter.id}) }}">
+        <button class="btn">Modifié</button>
+    </form>
+    <form method="post" action="{{ path('app_encounter_delete', {'id': encounter.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ encounter.id) }}">
+        <button class="btn">Supprimé</button>
+    </form>
 {% endblock %}

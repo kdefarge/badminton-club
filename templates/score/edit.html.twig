@@ -5,9 +5,10 @@
 {% block body %}
     <h1>Edit score - set {{ score.number }}</h1>
 
-    {{ include('score/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('score/_form.html.twig', {'button_label': 'sauvegardé'}) }}
+    <br />
+    <a href="{{ path('app_score_delete', {'id': score.id}) }}">supprimer</a>
+    <br />
 
     <a href="{{ path('app_encounter_show', {'id': score.encounter.id}) }}">retour sur la rencontre</a>
-
-    {{ include('score/_delete_form.html.twig') }}
 {% endblock %}

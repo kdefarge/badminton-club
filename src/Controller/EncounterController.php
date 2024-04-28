@@ -36,13 +36,28 @@ class EncounterController extends AbstractController
 
         $entityManager->flush();
         
-        return $this->redirectToRoute('app_encounter_show', ['id' => $encounter->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_encounter_edit', ['id' => $encounter->getId()], Response::HTTP_SEE_OTHER);
     }
-
+    
     #[Route('/{id}', name: 'app_encounter_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, int $id, EncounterRepository $encounterRepository, EntityManagerInterface $entityManager, ScoreRepository $scoreRepository): Response
+    public function show(int $id, EncounterRepository $encounterRepository): Response
     {
         $encounter = $encounterRepository->findOneJoinedByID($id);
+        if(is_null($encounter))
+            return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
+
+        return $this->render('encounter/show.html.twig', [
+            'encounter' => $encounter,
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_encounter_edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, int $id, EncounterRepository $encounterRepository, EntityManagerInterface $entityManager, ScoreRepository $scoreRepository): Response
+    {
+        $encounter = $encounterRepository->findOneJoinedByID($id);
+        if(is_null($encounter))
+            return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
+
         $formEncounter = $this->createForm(EncounterType::class, $encounter);
         $formEncounter->handleRequest($request);
 
@@ -53,7 +68,7 @@ class EncounterController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_encounter_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_encounter_edit', ['id' => $id], Response::HTTP_SEE_OTHER);
         }
 
         $encounterPlayer = new EncounterPlayer();
@@ -70,7 +85,7 @@ class EncounterController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_encounter_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_encounter_edit', ['id' => $id], Response::HTTP_SEE_OTHER);
         }
 
         $score = new Score();
@@ -88,32 +103,14 @@ class EncounterController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_encounter_show', ['id' => $id], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('encounter/show.html.twig', [
-            'encounter' => $encounter,
-            'form_encounter' => $formEncounter,
-            'form_encounter_player' => $formEncounterPlayer,
-            'form_score' => $formScore,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_encounter_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Encounter $encounter, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(EncounterType::class, $encounter);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_encounter_edit', ['id' => $id], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('encounter/edit.html.twig', [
             'encounter' => $encounter,
-            'form' => $form,
+            'form_encounter' => $formEncounter,
+            'form_encounter_player' => $formEncounterPlayer,
+            'form_score' => $formScore,
         ]);
     }
 
@@ -135,6 +132,6 @@ class EncounterController extends AbstractController
         $entityManager->remove($encounterPlayer);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_encounter_show', ['id' => $encounterId], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_encounter_edit', ['id' => $encounterId], Response::HTTP_SEE_OTHER);
     }
 }
