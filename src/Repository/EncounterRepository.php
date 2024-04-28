@@ -28,6 +28,7 @@ class EncounterRepository extends ServiceEntityRepository
             ->leftJoin('e.encounterPlayers', 'ep')
             ->leftJoin('ep.player', 'p')
             ->leftJoin('e.scores', 's')
+            ->orderBy('e.id', 'DESC')
             ->getQuery()
             ->getResult();
     }
