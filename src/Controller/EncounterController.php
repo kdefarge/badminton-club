@@ -31,7 +31,6 @@ class EncounterController extends AbstractController
     public function new(EntityManagerInterface $entityManager): Response
     {
         $encounter = new Encounter();
-        $encounter->setFinished(true);
         $encounter->setCreatedAt(date_create_immutable());
         $entityManager->persist($encounter);
 
@@ -44,6 +43,19 @@ class EncounterController extends AbstractController
     public function show(Request $request, int $id, EncounterRepository $encounterRepository, EntityManagerInterface $entityManager, ScoreRepository $scoreRepository): Response
     {
         $encounter = $encounterRepository->findOneJoinedByID($id);
+        $formEncounter = $this->createForm(EncounterType::class, $encounter);
+        $formEncounter->handleRequest($request);
+
+        if ($formEncounter->isSubmitted() && $formEncounter->isValid()) {
+
+            $encounter->setUpdatedAt(date_create_immutable());
+            $entityManager->persist($encounter);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_encounter_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+        }
+
         $encounterPlayer = new EncounterPlayer();
         $formEncounterPlayer = $this->createForm(EncounterPlayerType::class, $encounterPlayer);
         $formEncounterPlayer->handleRequest($request);
@@ -81,6 +93,7 @@ class EncounterController extends AbstractController
 
         return $this->render('encounter/show.html.twig', [
             'encounter' => $encounter,
+            'form_encounter' => $formEncounter,
             'form_encounter_player' => $formEncounterPlayer,
             'form_score' => $formScore,
         ]);

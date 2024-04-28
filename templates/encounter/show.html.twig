@@ -55,7 +55,7 @@
 
 {{ form_start(form_encounter_player) }}
     {{ form_widget(form_encounter_player) }}
-    <button class="btn">{{ button_label|default('add') }}</button>
+    <button class="btn">{{ button_label|default('ajouté') }}</button>
 {{ form_end(form_encounter_player) }}
 
 <br />
@@ -64,6 +64,14 @@
 {% include('score/_form.html.twig') with {'form': form_score} only %}
 
 <br />
+<br />
+<br />
+
+{{ form_start(form_encounter) }}
+    {{ form_widget(form_encounter) }}
+    <button class="btn">{{ button_label|default('sauvegardé') }}</button>
+{{ form_end(form_encounter) }}
+
 <br />
 <br />
 

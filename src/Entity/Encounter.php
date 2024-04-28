@@ -44,6 +44,7 @@ class Encounter
 
     public function __construct()
     {
+        $this->isFinished = false;
         $this->scores = new ArrayCollection();
         $this->encounterPlayers = new ArrayCollection();
     }
@@ -58,10 +59,10 @@ class Encounter
         return $this->isFinished;
     }
 
-    public function setFinished(bool $isFinished): static
+    public function setIsFinished(bool $isFinished): static
     {
         if (!$isFinished)
-            $this->isFinished = null;
+            $this->isTeam1Won = null;
 
         $this->isFinished = $isFinished;
 
@@ -73,11 +74,9 @@ class Encounter
         return $this->isTeam1Won;
     }
 
-    public function setTeam1Won(?bool $isTeam1Won): static
+    public function setIsTeam1Won(?bool $isTeam1Won): static
     {
-        if (!$isTeam1Won)
-            $this->isFinished = true;
-
+        $this->isFinished = !is_null($isTeam1Won);
         $this->isTeam1Won = $isTeam1Won;
 
         return $this;
