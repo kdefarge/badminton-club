@@ -104,7 +104,7 @@ class EncounterController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_encounter_delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'app_encounter_delete', methods: ['POST'])]
     public function delete(Request $request, Encounter $encounter, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete' . $encounter->getId(), $request->getPayload()->get('_token'))) {
