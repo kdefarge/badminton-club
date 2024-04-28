@@ -70,7 +70,7 @@ class AppFixtures extends Fixture
             $createAt = $faker->dateTimeInInterval("-200 days", "-50 days", "Europe/Paris");
             $encounter->setCreatedAt(DateTimeImmutable::createFromMutable($createAt));
             if ($encounter->isFinished()) {
-                $encounter->setIsFinished($faker->boolean());
+                $encounter->setIsTeam1Won($faker->boolean());
                 $encounter->setUpdatedAt(DateTimeImmutable::createFromMutable($faker->dateTimeInInterval($createAt, "-1 days", "Europe/Paris")));
             }
             $manager->persist($encounter);
