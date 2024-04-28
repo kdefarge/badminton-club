@@ -66,11 +66,11 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 60; $i++) {
 
             $encounter = new Encounter();
-            $encounter->setFinished($faker->boolean(80));
+            $encounter->setIsFinished($faker->boolean(80));
             $createAt = $faker->dateTimeInInterval("-200 days", "-50 days", "Europe/Paris");
             $encounter->setCreatedAt(DateTimeImmutable::createFromMutable($createAt));
             if ($encounter->isFinished()) {
-                $encounter->setTeam1Won($faker->boolean());
+                $encounter->setIsFinished($faker->boolean());
                 $encounter->setUpdatedAt(DateTimeImmutable::createFromMutable($faker->dateTimeInInterval($createAt, "-1 days", "Europe/Paris")));
             }
             $manager->persist($encounter);
@@ -80,7 +80,7 @@ class AppFixtures extends Fixture
             for ($u = 0; $u < count($playersToAdd); $u++) {
                 $encounterPlayer = new EncounterPlayer();
                 $encounterPlayer->setPlayer($playersToAdd[$u]);
-                $encounterPlayer->setTeam1($u % 2 != 0);
+                $encounterPlayer->setIsTeam1($u % 2 != 0);
                 $encounterPlayer->setEncounter($encounter);
                 $manager->persist($encounterPlayer);
             }
