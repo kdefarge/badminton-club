@@ -58,6 +58,10 @@
     <button class="btn">{{ button_label|default('add') }}</button>
 {{ form_end(form_encounter_player) }}
 
+<br />
+<br />
+
+{% include('score/_form.html.twig') with {'form': form_score} only %}
 
 <br />
 <br />

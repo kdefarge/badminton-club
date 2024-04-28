@@ -4,9 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Encounter;
 use App\Entity\EncounterPlayer;
+use App\Entity\Score;
 use App\Form\EncounterPlayerType;
 use App\Form\EncounterType;
+use App\Form\ScoreType;
 use App\Repository\EncounterRepository;
+use App\Repository\ScoreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,12 +34,14 @@ class EncounterController extends AbstractController
         $encounter->setFinished(true);
         $encounter->setCreatedAt(date_create_immutable());
         $entityManager->persist($encounter);
+
         $entityManager->flush();
+        
         return $this->redirectToRoute('app_encounter_show', ['id' => $encounter->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}', name: 'app_encounter_show', methods: ['GET', 'POST'])]
-    public function show(Request $request, int $id, EncounterRepository $encounterRepository, EntityManagerInterface $entityManager): Response
+    public function show(Request $request, int $id, EncounterRepository $encounterRepository, EntityManagerInterface $entityManager, ScoreRepository $scoreRepository): Response
     {
         $encounter = $encounterRepository->findOneJoinedByID($id);
         $encounterPlayer = new EncounterPlayer();
@@ -44,15 +49,40 @@ class EncounterController extends AbstractController
         $formEncounterPlayer->handleRequest($request);
 
         if ($formEncounterPlayer->isSubmitted() && $formEncounterPlayer->isValid()) {
+
             $encounterPlayer->setEncounter($encounter);
             $entityManager->persist($encounterPlayer);
+
+            $encounter->setUpdatedAt(date_create_immutable());
+            $entityManager->persist($encounter);
+
             $entityManager->flush();
+
+            return $this->redirectToRoute('app_encounter_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+        }
+
+        $score = new Score();
+        $formScore = $this->createForm(ScoreType::class, $score);
+        $formScore->handleRequest($request);
+
+        if ($formScore->isSubmitted() && $formScore->isValid()) {
+
+            $score->setEncounter($encounter);
+            $score->setNumber($scoreRepository->count(array('encounter' => $encounter)) + 1);
+            $entityManager->persist($score);
+
+            $encounter->setUpdatedAt(date_create_immutable());
+            $entityManager->persist($encounter);
+
+            $entityManager->flush();
+
             return $this->redirectToRoute('app_encounter_show', ['id' => $id], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('encounter/show.html.twig', [
             'encounter' => $encounter,
             'form_encounter_player' => $formEncounterPlayer,
+            'form_score' => $formScore,
         ]);
     }
 
