@@ -60,6 +60,9 @@ class Encounter
 
     public function setFinished(bool $isFinished): static
     {
+        if (!$isFinished)
+            $this->isFinished = null;
+
         $this->isFinished = $isFinished;
 
         return $this;
@@ -72,6 +75,9 @@ class Encounter
 
     public function setTeam1Won(?bool $isTeam1Won): static
     {
+        if (!$isTeam1Won)
+            $this->isFinished = true;
+
         $this->isTeam1Won = $isTeam1Won;
 
         return $this;

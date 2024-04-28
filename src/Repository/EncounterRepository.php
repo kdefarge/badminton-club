@@ -26,7 +26,7 @@ class EncounterRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->select(['e', 'ep', 'p', 's'])
             ->leftJoin('e.encounterPlayers', 'ep')
-            ->join('ep.player', 'p')
+            ->leftJoin('ep.player', 'p')
             ->leftJoin('e.scores', 's')
             ->getQuery()
             ->getResult();
@@ -39,7 +39,7 @@ class EncounterRepository extends ServiceEntityRepository
             ->andWhere('e.id = :id')
             ->setParameter('id', $id)
             ->leftJoin('e.encounterPlayers', 'ep')
-            ->join('ep.player', 'p')
+            ->leftJoin('ep.player', 'p')
             ->leftJoin('e.scores', 's')
             ->getQuery()
             ->getOneOrNullResult();

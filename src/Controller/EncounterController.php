@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Encounter;
 use App\Form\EncounterType;
 use App\Repository\EncounterRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,23 +24,14 @@ class EncounterController extends AbstractController
     }
 
     #[Route('/new', name: 'app_encounter_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(EntityManagerInterface $entityManager): Response
     {
         $encounter = new Encounter();
-        $form = $this->createForm(EncounterType::class, $encounter);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($encounter);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('encounter/new.html.twig', [
-            'encounter' => $encounter,
-            'form' => $form,
-        ]);
+        $encounter->setFinished(true);
+        $encounter->setCreatedAt(date_create_immutable());
+        $entityManager->persist($encounter);
+        $entityManager->flush();
+        return $this->redirectToRoute('app_encounter_show', ['id' => $encounter->getId()], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}', name: 'app_encounter_show', methods: ['GET'])]
@@ -71,7 +63,7 @@ class EncounterController extends AbstractController
     #[Route('/{id}', name: 'app_encounter_delete', methods: ['POST'])]
     public function delete(Request $request, Encounter $encounter, EntityManagerInterface $entityManager): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$encounter->getId(), $request->getPayload()->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $encounter->getId(), $request->getPayload()->get('_token'))) {
             $entityManager->remove($encounter);
             $entityManager->flush();
         }
