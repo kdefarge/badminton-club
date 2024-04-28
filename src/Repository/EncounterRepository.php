@@ -24,10 +24,10 @@ class EncounterRepository extends ServiceEntityRepository
     public function findAllJoined(): array
     {
         return $this->createQueryBuilder('e')
-            ->select(['e','ep','p','r'])
+            ->select(['e', 'ep', 'p', 's'])
             ->leftJoin('e.encounterPlayers', 'ep')
             ->join('ep.player', 'p')
-            ->leftJoin('e.setResults', 'r')
+            ->leftJoin('e.scores', 's')
             ->getQuery()
             ->getResult();
     }
@@ -35,12 +35,12 @@ class EncounterRepository extends ServiceEntityRepository
     public function findOneJoinedByID($id): ?Encounter
     {
         return $this->createQueryBuilder('e')
-            ->select(['e','ep','p','r'])
+            ->select(['e', 'ep', 'p', 's'])
             ->andWhere('e.id = :id')
             ->setParameter('id', $id)
             ->leftJoin('e.encounterPlayers', 'ep')
             ->join('ep.player', 'p')
-            ->leftJoin('e.setResults', 'r')
+            ->leftJoin('e.scores', 's')
             ->getQuery()
             ->getOneOrNullResult();
     }

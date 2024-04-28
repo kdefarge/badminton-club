@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit score{% endblock %}
+
+{% block body %}
+    <h1>Edit score - set {{ score.number }}</h1>
+
+    {{ include('score/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_encounter_show', {'id': score.encounter.id}) }}">retour sur la rencontre</a>
+
+    {{ include('score/_delete_form.html.twig') }}
+{% endblock %}

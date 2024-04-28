@@ -25,8 +25,8 @@
                     {% endfor %}
                 </td>
                 <td>
-                    {% for setResult in encounter.setResults %}
-                        {{ setResult.scoreTeam1 }} - {{ setResult.scoreTeam2 }}<br />
+                    {% for score in encounter.scores %}
+                        {{ score.scoreTeam1 }} - {{ score.scoreTeam2 }}<br />
                     {% else %}
                         pas de scores
                     {% endfor %}

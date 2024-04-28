@@ -6,9 +6,9 @@ use App\Config\PlayerGender;
 use App\Config\PlayerSkill;
 use App\Entity\Encounter;
 use App\Entity\EncounterPlayer;
-use App\Entity\EncounterSetResult;
 use App\Entity\Gender;
 use App\Entity\Player;
+use App\Entity\Score;
 use App\Entity\Skill;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -88,15 +88,15 @@ class AppFixtures extends Fixture
             if ($encounter->isFinished()) {
                 $nombreDeSet = $faker->numberBetween(1, 3);
                 for ($u = 0; $u < $nombreDeSet; $u++) {
-                    $encounterSetResult = new EncounterSetResult();
-                    $encounterSetResult->setEncounter($encounter);
-                    $encounterSetResult->setNumber($u + 1);
+                    $score = new Score();
+                    $score->setEncounter($encounter);
+                    $score->setNumber($u + 1);
                     $scoreLoser = $faker->numberBetween(1, 29);
                     $scoreWinner = $scoreLoser > 19 ? ($scoreLoser == 29 ? 30 : $scoreLoser + 2) : 21;
                     $isTeam1Won = ($nombreDeSet == 3 && $u == 1) ? !$encounter->isTeam1Won() : $encounter->isTeam1Won();
-                    $encounterSetResult->setScoreTeam1($isTeam1Won ? $scoreWinner : $scoreLoser);
-                    $encounterSetResult->setScoreTeam2(!$isTeam1Won ? $scoreWinner : $scoreLoser);
-                    $manager->persist($encounterSetResult);
+                    $score->setScoreTeam1($isTeam1Won ? $scoreWinner : $scoreLoser);
+                    $score->setScoreTeam2(!$isTeam1Won ? $scoreWinner : $scoreLoser);
+                    $manager->persist($score);
                 }
             }
         }

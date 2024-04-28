@@ -26,10 +26,10 @@
                 </td>
             </tr>
             <tr>
-                <th>resultats</th>
+                <th>Score</th>
                 <td>
-                    {% for setResult in encounter.setResults %}
-                        {{ setResult.scoreTeam1 }} - {{ setResult.scoreTeam2 }} [<a href="{{ path('app_set_result_edit', {'id': setResult.id}) }}">edit</a>]<br />
+                    {% for score in encounter.scores %}
+                        {{ score.scoreTeam1 }} - {{ score.scoreTeam2 }} [<a href="{{ path('app_score_edit', {'id': score.id}) }}">edit</a>]<br />
                     {% else %}
                         pas de scores
                     {% endfor %}
@@ -53,7 +53,7 @@
     <a href="{{ path('app_encounter_index') }}">back to list</a>
 
     <a href="{{ path('app_encounter_edit', {'id': encounter.id}) }}">edit</a>
-    <a href="{{ path('app_set_result_new', {'id': encounter.id}) }}">Ajouter score</a>
+    <a href="{{ path('app_score_new', {'id': encounter.id}) }}">Ajouter score</a>
 
     {{ include('encounter/_delete_form.html.twig') }}
 {% endblock %}
