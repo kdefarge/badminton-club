@@ -1,9 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Encounter{% endblock %}
+{% block title %}Rencontre{% endblock %}
 
 {% block body %}
-    <h1>Encounter</h1>
+    <h1>Rencontre</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>NAME</th>
+                {% for score in encounter.scores %}
+                <th>
+                    SET {{ score.number }}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    EQUIPE 1
+                    {% for encounterPlayer in encounter.EncounterPlayers %}
+                        {% if encounterPlayer.isTeam1 %}
+                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} [<a href="{{ path('app_player_encounter_remove', {'id': encounterPlayer.id}) }}">X</a>]
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                {% for score in encounter.scores %}
+                <td>
+                    {{ score.scoreTeam1 }}
+                </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>
+                    EQUIPE 2
+                    {% for encounterPlayer in encounter.EncounterPlayers %}
+                        {% if not encounterPlayer.isTeam1 %}
+                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} [<a href="{{ path('app_player_encounter_remove', {'id': encounterPlayer.id}) }}">X</a>]
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                {% for score in encounter.scores %}
+                <td>
+                    {{ score.scoreTeam2 }}
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+
+<br />
+<br />
+<br />
+<br />
+<br />
 
     <table class="table">
         <tbody>
@@ -14,26 +65,6 @@
             <tr>
                 <th>IsFinished</th>
                 <td>{{ encounter.isFinished ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>joueurs</th>
-                <td>
-                    {% for encounterPlayer in encounter.EncounterPlayers %}
-                        {{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} - {{ encounterPlayer.isTeam1 }}<br />
-                    {% else %}
-                        pas de scores
-                    {% endfor %}
-                </td>
-            </tr>
-            <tr>
-                <th>Score</th>
-                <td>
-                    {% for score in encounter.scores %}
-                        {{ score.scoreTeam1 }} - {{ score.scoreTeam2 }} [<a href="{{ path('app_score_edit', {'id': score.id}) }}">edit</a>]<br />
-                    {% else %}
-                        pas de scores
-                    {% endfor %}
-                </td>
             </tr>
             <tr>
                 <th>IsTeam1Won</th>

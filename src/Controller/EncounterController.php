@@ -3,9 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\Encounter;
+use App\Entity\EncounterPlayer;
 use App\Form\EncounterType;
 use App\Repository\EncounterRepository;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -69,5 +69,15 @@ class EncounterController extends AbstractController
         }
 
         return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/player/remove/{id}', name: 'app_player_encounter_remove', methods: ['GET'])]
+    public function playerRemove(EncounterPlayer $encounterPlayer, EntityManagerInterface $entityManager): Response
+    {
+        $encounterId = $encounterPlayer->getEncounter()->getId();
+        $entityManager->remove($encounterPlayer);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_encounter_show', ['id' => $encounterId], Response::HTTP_SEE_OTHER);
     }
 }
