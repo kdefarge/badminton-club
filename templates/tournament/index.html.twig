@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des tournois{% endblock %}
+
+{% block body %}
+    <h1>Liste des tournois</h1>
+
+    <br />
+    {# <a href="{{ path('app_player_new') }}">Create new</a> #}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>nom</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tournament in tournaments %}
+            <tr>
+                <td>{{ tournament.id }}</td>
+                <td>{{ tournament.name }}</td>
+                <td>
+                    {# <a href="{{ path('app_tournament_show', {'id': tournament.id}) }}">show</a> #}
+                    {# <a href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">edit</a> #}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Pas de tournois trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
