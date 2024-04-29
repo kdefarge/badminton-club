@@ -29,6 +29,7 @@ class EncounterRepository extends ServiceEntityRepository
             ->leftJoin('ep.player', 'p')
             ->leftJoin('e.scores', 's')
             ->orderBy('e.id', 'DESC')
+            ->addOrderBy('s.number', 'ASC')
             ->getQuery()
             ->getResult();
     }
@@ -42,6 +43,7 @@ class EncounterRepository extends ServiceEntityRepository
             ->leftJoin('e.encounterPlayers', 'ep')
             ->leftJoin('ep.player', 'p')
             ->leftJoin('e.scores', 's')
+            ->orderBy('s.number', 'ASC')
             ->getQuery()
             ->getOneOrNullResult();
     }
