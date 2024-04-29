@@ -28,10 +28,10 @@ class Encounter
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
-     * @var Collection<int, EncounterSetResult>
+     * @var Collection<int, Score>
      */
-    #[ORM\OneToMany(targetEntity: EncounterSetResult::class, mappedBy: 'encounter', orphanRemoval: true)]
-    private Collection $setResults;
+    #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'encounter', orphanRemoval: true)]
+    private Collection $scores;
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
     private ?Tournament $tournament = null;
@@ -44,7 +44,8 @@ class Encounter
 
     public function __construct()
     {
-        $this->setResults = new ArrayCollection();
+        $this->isFinished = false;
+        $this->scores = new ArrayCollection();
         $this->encounterPlayers = new ArrayCollection();
     }
 
@@ -58,8 +59,11 @@ class Encounter
         return $this->isFinished;
     }
 
-    public function setFinished(bool $isFinished): static
+    public function setIsFinished(bool $isFinished): static
     {
+        if (!$isFinished)
+            $this->isTeam1Won = null;
+
         $this->isFinished = $isFinished;
 
         return $this;
@@ -70,8 +74,9 @@ class Encounter
         return $this->isTeam1Won;
     }
 
-    public function setTeam1Won(?bool $isTeam1Won): static
+    public function setIsTeam1Won(?bool $isTeam1Won): static
     {
+        $this->isFinished = !is_null($isTeam1Won);
         $this->isTeam1Won = $isTeam1Won;
 
         return $this;
@@ -102,29 +107,29 @@ class Encounter
     }
 
     /**
-     * @return Collection<int, EncounterSetResult>
+     * @return Collection<int, Score>
      */
-    public function getSetResults(): Collection
+    public function getScores(): Collection
     {
-        return $this->setResults;
+        return $this->scores;
     }
 
-    public function addSetResult(EncounterSetResult $setResult): static
+    public function addScore(Score $score): static
     {
-        if (!$this->setResults->contains($setResult)) {
-            $this->setResults->add($setResult);
-            $setResult->setEncounter($this);
+        if (!$this->scores->contains($score)) {
+            $this->scores->add($score);
+            $score->setEncounter($this);
         }
 
         return $this;
     }
 
-    public function removeSetResult(EncounterSetResult $setResult): static
+    public function removeScore(Score $score): static
     {
-        if ($this->setResults->removeElement($setResult)) {
+        if ($this->scores->removeElement($score)) {
             // set the owning side to null (unless already changed)
-            if ($setResult->getEncounter() === $this) {
-                $setResult->setEncounter(null);
+            if ($score->getEncounter() === $this) {
+                $score->setEncounter(null);
             }
         }
 

@@ -1,0 +1,114 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rencontre{% endblock %}
+
+{% block body %}
+    <h1>Rencontre</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>NAME</th>
+                {% for score in encounter.scores %}
+                <th>
+                    [<a href="{{ path('app_score_delete', {'id': score.id}) }}">X</a>] SET {{ score.number }}
+                    <br />[<a href="{{ path('app_score_edit', {'id': score.id}) }}">Editer</a>]
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    EQUIPE 1
+                    {% for encounterPlayer in encounter.EncounterPlayers %}
+                        {% if encounterPlayer.isTeam1 %}
+                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} [<a href="{{ path('app_player_encounter_remove', {'id': encounterPlayer.id}) }}">X</a>]
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                {% for score in encounter.scores %}
+                <td>
+                    {{ score.scoreTeam1 }}
+                </td>
+                {% endfor %}
+            </tr>
+            <tr>
+                <td>
+                    EQUIPE 2
+                    {% for encounterPlayer in encounter.EncounterPlayers %}
+                        {% if not encounterPlayer.isTeam1 %}
+                            <br />{{ encounterPlayer.player.firstname }} {{ encounterPlayer.player.lastname }} [<a href="{{ path('app_player_encounter_remove', {'id': encounterPlayer.id}) }}">X</a>]
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                {% for score in encounter.scores %}
+                <td>
+                    {{ score.scoreTeam2 }}
+                </td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+
+<br />
+<br />
+
+{{ form_start(form_encounter_player) }}
+    {{ form_widget(form_encounter_player) }}
+    <button class="btn">{{ button_label|default('ajouté') }}</button>
+{{ form_end(form_encounter_player) }}
+
+<br />
+<br />
+
+{% include('score/_form.html.twig') with {'form': form_score} only %}
+
+<br />
+<br />
+<br />
+
+{{ form_start(form_encounter) }}
+    {{ form_widget(form_encounter) }}
+    <button class="btn">{{ button_label|default('sauvegardé') }}</button>
+{{ form_end(form_encounter) }}
+
+<br />
+<br />
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Identifiant</th>
+                <td>{{ encounter.id }}</td>
+            </tr>
+            <tr>
+                <th>Terminé ?</th>
+                <td>{{ encounter.isFinished ? 'Yes' : 'No' }}</td>
+            </tr>
+            {% if encounter.isTeam1Won is not null %}
+            <tr>
+                <th>Gagnant ?</th>
+                <td>équipe {{ encounter.isTeam1Won ? '1' : '2' }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ encounter.createdAt ? encounter.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ encounter.updatedAt ? encounter.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <form method="get" action="{{ path('app_encounter_show', {'id': encounter.id}) }}">
+        <button class="btn">retour</button>
+    </form>
+
+    <form method="post" action="{{ path('app_encounter_delete', {'id': encounter.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ encounter.id) }}">
+        <button class="btn">Supprimé</button>
+    </form>
+{% endblock %}

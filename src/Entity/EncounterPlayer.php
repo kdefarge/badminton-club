@@ -38,7 +38,7 @@ class EncounterPlayer
         return $this->isTeam1;
     }
 
-    public function setTeam1(bool $isTeam1): static
+    public function setIsTeam1(bool $isTeam1): static
     {
         $this->isTeam1 = $isTeam1;
 

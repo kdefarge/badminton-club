@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\EncounterSetResultRepository;
+use App\Repository\ScoreRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: EncounterSetResultRepository::class)]
-class EncounterSetResult
+#[ORM\Entity(repositoryClass: ScoreRepository::class)]
+class Score
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,7 +23,7 @@ class EncounterSetResult
     #[ORM\Column(type: Types::SMALLINT)]
     private ?int $scoreTeam2 = null;
 
-    #[ORM\ManyToOne(inversedBy: 'setResults')]
+    #[ORM\ManyToOne(inversedBy: 'scores')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Encounter $encounter = null;
 

@@ -6,9 +6,9 @@ use App\Config\PlayerGender;
 use App\Config\PlayerSkill;
 use App\Entity\Encounter;
 use App\Entity\EncounterPlayer;
-use App\Entity\EncounterSetResult;
 use App\Entity\Gender;
 use App\Entity\Player;
+use App\Entity\Score;
 use App\Entity\Skill;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -66,11 +66,11 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < 60; $i++) {
 
             $encounter = new Encounter();
-            $encounter->setFinished($faker->boolean(80));
+            $encounter->setIsFinished($faker->boolean(80));
             $createAt = $faker->dateTimeInInterval("-200 days", "-50 days", "Europe/Paris");
             $encounter->setCreatedAt(DateTimeImmutable::createFromMutable($createAt));
             if ($encounter->isFinished()) {
-                $encounter->setTeam1Won($faker->boolean());
+                $encounter->setIsTeam1Won($faker->boolean());
                 $encounter->setUpdatedAt(DateTimeImmutable::createFromMutable($faker->dateTimeInInterval($createAt, "-1 days", "Europe/Paris")));
             }
             $manager->persist($encounter);
@@ -80,7 +80,7 @@ class AppFixtures extends Fixture
             for ($u = 0; $u < count($playersToAdd); $u++) {
                 $encounterPlayer = new EncounterPlayer();
                 $encounterPlayer->setPlayer($playersToAdd[$u]);
-                $encounterPlayer->setTeam1($u % 2 != 0);
+                $encounterPlayer->setIsTeam1($u % 2 != 0);
                 $encounterPlayer->setEncounter($encounter);
                 $manager->persist($encounterPlayer);
             }
@@ -88,15 +88,15 @@ class AppFixtures extends Fixture
             if ($encounter->isFinished()) {
                 $nombreDeSet = $faker->numberBetween(1, 3);
                 for ($u = 0; $u < $nombreDeSet; $u++) {
-                    $encounterSetResult = new EncounterSetResult();
-                    $encounterSetResult->setEncounter($encounter);
-                    $encounterSetResult->setNumber($u + 1);
+                    $score = new Score();
+                    $score->setEncounter($encounter);
+                    $score->setNumber($u + 1);
                     $scoreLoser = $faker->numberBetween(1, 29);
                     $scoreWinner = $scoreLoser > 19 ? ($scoreLoser == 29 ? 30 : $scoreLoser + 2) : 21;
-                    $isTeam1Won = $encounter->isTeam1Won() || ($nombreDeSet == 3 && $u == 1);
-                    $encounterSetResult->setScoreTeam1($isTeam1Won ? $scoreWinner : $scoreLoser);
-                    $encounterSetResult->setScoreTeam2(!$isTeam1Won ? $scoreWinner : $scoreLoser);
-                    $manager->persist($encounterSetResult);
+                    $isTeam1Won = ($nombreDeSet == 3 && $u == 1) ? !$encounter->isTeam1Won() : $encounter->isTeam1Won();
+                    $score->setScoreTeam1($isTeam1Won ? $scoreWinner : $scoreLoser);
+                    $score->setScoreTeam2(!$isTeam1Won ? $scoreWinner : $scoreLoser);
+                    $manager->persist($score);
                 }
             }
         }
