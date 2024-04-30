@@ -14,16 +14,8 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/tournament')]
 class TournamentController extends AbstractController
 {
-    #[Route('/', name: 'app_tournament_index', methods: ['GET'])]
-    public function index(TournamentRepository $tournamentRepository): Response
-    {
-        return $this->render('tournament/index.html.twig', [
-            'tournaments' => $tournamentRepository->findAll(),
-        ]);
-    }
-
-    #[Route('/new', name: 'app_tournament_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/', name: 'app_tournament_index', methods: ['GET', 'POST'])]
+    public function index(Request $request, EntityManagerInterface $entityManager, tournamentRepository $tournamentRepository): Response
     {
         $tournament = new Tournament();
         $form = $this->createForm(TournamentType::class, $tournament);
@@ -33,14 +25,42 @@ class TournamentController extends AbstractController
 
             $tournament->setCreatedAt(date_create_immutable());
             $entityManager->persist($tournament);
-            
+
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('tournament/new.html.twig', [
-            'form' => $form,
+        return $this->render('tournament/index.html.twig', [
+            'tournaments' => $tournamentRepository->findBy([], ['id' => 'DESC']),
+            'form_tournament' => $form,
+        ]);
+    }
+
+    #[Route('/{id}', name: 'app_tournament_show', methods: ['GET', 'POST'])]
+    public function show(int $id, Request $request, EntityManagerInterface $entityManager, TournamentRepository $tournamentRepository): Response
+    {
+        $tournament = $tournamentRepository->findOneBy(['id' => $id]);
+
+        if (is_null($tournament))
+            return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
+
+        $form = $this->createForm(TournamentType::class, $tournament);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $tournament->setUpdatedAt(date_create_immutable());
+            $entityManager->persist($tournament);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('tournament/show.html.twig', [
+            'tournament' => $tournament,
+            'form_tournament' => $form,
         ]);
     }
 

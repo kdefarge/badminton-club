@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tournois{% endblock %}
+
+{% block body %}
+    <h1>Tournois</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Name</th>
+                <td>{% include 'tournament/_form.html.twig' with {'button_label': 'édité', 'form': form_tournament} only %}</td>
+            </tr>
+            <tr>
+                <th>Crée à</th>
+                <td>{{ tournament.createdAt ? tournament.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>édité à</th>
+                <td>{{ tournament.updatedAt ? tournament.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_tournament_index') }}">Liste des tournois</a>
+    <br /><br /><br />   
+    <a href="{{ path('app_tournament_delete', {'id': tournament.id}) }}">Supprimer</a>
+{% endblock %}
