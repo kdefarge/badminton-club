@@ -43,4 +43,13 @@ class TournamentController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/delete/{id}', name: 'app_tournament_delete', methods: ['GET'])]
+    public function delete(Tournament $tournament, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($tournament);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
+    }
 }
