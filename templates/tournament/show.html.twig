@@ -17,7 +17,12 @@
             </tr>
             <tr>
                 <th>Liste des joueurs</th>
-                <td>soon</td>
+                <td>
+                    {% for playerAvailable in tournament.playersAvailable %}
+                        {{ playerAvailable.firstname }} {{ playerAvailable.lastname }}<br />
+                    {% else %}
+                        pas de joueurs disponible
+                    {% endfor %}</td>
             </tr>
             <tr>
                 <th>Crée à</th>

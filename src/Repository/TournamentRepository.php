@@ -21,28 +21,15 @@ class TournamentRepository extends ServiceEntityRepository
         parent::__construct($registry, Tournament::class);
     }
 
-//    /**
-//     * @return Tournament[] Returns an array of Tournament objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Tournament
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findOneJoinedByID($id): ?Tournament
+    {
+        return $this->createQueryBuilder('t')
+            ->select(['t', 'pa'])
+            ->andWhere('t.id = :id')
+            ->setParameter('id', $id)
+            ->leftJoin('t.playersAvailable', 'pa')
+            ->orderBy('pa.firstname', 'ASC')
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

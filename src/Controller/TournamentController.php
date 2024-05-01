@@ -43,7 +43,7 @@ class TournamentController extends AbstractController
     #[Route('/{id}', name: 'app_tournament_show', methods: ['GET', 'POST'])]
     public function show(int $id, Request $request, EntityManagerInterface $entityManager, TournamentRepository $tournamentRepository): Response
     {
-        $tournament = $tournamentRepository->findOneBy(['id' => $id]);
+        $tournament = $tournamentRepository->findOneJoinedByID($id);
 
         if (is_null($tournament))
             return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
