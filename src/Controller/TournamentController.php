@@ -93,4 +93,14 @@ class TournamentController extends AbstractController
 
         return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{tournament}/player/{player}/remove', name: 'app_tournament_player_remove', methods: ['GET'])]
+    public function playerRemove(Tournament $tournament, Player $player, EntityManagerInterface $entityManager): Response
+    {
+        $tournament->removePlayersAvailable($player);
+        $entityManager->persist($tournament);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
+    }
 }
