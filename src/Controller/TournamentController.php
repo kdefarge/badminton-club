@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Player;
 use App\Entity\Tournament;
+use App\Form\PlayerListType;
 use App\Form\TournamentType;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\UnexpectedTypeException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -45,10 +48,10 @@ class TournamentController extends AbstractController
         if (is_null($tournament))
             return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
 
-        $form = $this->createForm(TournamentType::class, $tournament);
-        $form->handleRequest($request);
+        $formTournamment = $this->createForm(TournamentType::class, $tournament);
+        $formTournamment->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($formTournamment->isSubmitted() && $formTournamment->isValid()) {
 
             $tournament->setUpdatedAt(date_create_immutable());
             $entityManager->persist($tournament);
@@ -58,9 +61,27 @@ class TournamentController extends AbstractController
             return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
         }
 
+        $formPlayerList = $this->createForm(PlayerListType::class);
+        $formPlayerList->handleRequest($request);
+
+        if ($formPlayerList->isSubmitted() && $formPlayerList->isValid()) {
+
+            $player = $formPlayerList->getData()['player'];
+            if (!$player instanceof Player)
+                throw new UnexpectedTypeException($player, Player::class);
+
+            $tournament->addPlayersAvailable($player);
+            $entityManager->persist($tournament);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
+        }
+
         return $this->render('tournament/show.html.twig', [
             'tournament' => $tournament,
-            'form_tournament' => $form,
+            'form_tournament' => $formTournamment,
+            'form_player_list' => $formPlayerList,
         ]);
     }
 

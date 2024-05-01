@@ -12,6 +12,14 @@
                 <td>{% include 'tournament/_form.html.twig' with {'button_label': 'édité', 'form': form_tournament} only %}</td>
             </tr>
             <tr>
+                <th>Ajouté un joueur</th>
+                <td>{% include 'player/_list_form.html.twig' with {'button_label': 'ajouté', 'form': form_player_list} only %}</td>
+            </tr>
+            <tr>
+                <th>Liste des joueurs</th>
+                <td>soon</td>
+            </tr>
+            <tr>
                 <th>Crée à</th>
                 <td>{{ tournament.createdAt ? tournament.createdAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
