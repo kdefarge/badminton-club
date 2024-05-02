@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Player;
+use App\Entity\Tournament;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -27,6 +28,25 @@ class PlayerRepository extends ServiceEntityRepository
             ->select(['u','g','s'])
             ->leftJoin('u.gender', 'g')
             ->leftJoin('u.skill', 's')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllNotAvailableByTournament(Tournament $tournament): array
+    {
+        $sub = $this->createQueryBuilder('pt')
+            ->select('pt.id')
+            ->leftJoin('pt.tournaments', 't')
+            ->where('t.id = :tournament_id')
+            ->andWhere('p.id = pt.id');
+        
+        $qb = $this->createQueryBuilder('p');
+        return $qb
+            ->select(['p'])
+            ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
+            ->setParameter('tournament_id', $tournament->getId())
+            ->orderBy('p.firstname', 'ASC')
+            ->addOrderBy('p.lastname', 'ASC')
             ->getQuery()
             ->getResult();
     }

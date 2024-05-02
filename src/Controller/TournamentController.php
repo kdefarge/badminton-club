@@ -6,6 +6,7 @@ use App\Entity\Player;
 use App\Entity\Tournament;
 use App\Form\PlayerListType;
 use App\Form\TournamentType;
+use App\Repository\PlayerRepository;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -41,8 +42,13 @@ class TournamentController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_tournament_show', methods: ['GET', 'POST'])]
-    public function show(int $id, Request $request, EntityManagerInterface $entityManager, TournamentRepository $tournamentRepository): Response
-    {
+    public function show(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        TournamentRepository $tournamentRepository,
+        PlayerRepository $playerRepository
+    ): Response {
         $tournament = $tournamentRepository->findOneJoinedByID($id);
 
         if (is_null($tournament))
@@ -61,7 +67,12 @@ class TournamentController extends AbstractController
             return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
         }
 
-        $formPlayerList = $this->createForm(PlayerListType::class);
+        $formPlayerList = $this->createForm(
+            PlayerListType::class,
+            null,
+            ['players' => $playerRepository->findAllNotAvailableByTournament($tournament)]
+        );
+
         $formPlayerList->handleRequest($request);
 
         if ($formPlayerList->isSubmitted() && $formPlayerList->isValid()) {

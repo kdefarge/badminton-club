@@ -3,19 +3,35 @@
 namespace App\Form;
 
 use App\Entity\Player;
+use App\Repository\PlayerRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PlayerListType extends AbstractType
 {
+    public function __construct(
+        private PlayerRepository $playerRepository
+    ) { }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('player', EntityType::class, [
                 'class' => Player::class,
+                'choices' => $options['players'],
                 'placeholder' => 'Prénom et nom du joueur',
                 'autocomplete' => true,
             ]);
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'players' => $this->playerRepository->findAll(),
+        ]);
+
+        $resolver->setAllowedTypes('players', 'array');
     }
 }
