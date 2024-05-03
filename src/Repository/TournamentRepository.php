@@ -27,7 +27,7 @@ class TournamentRepository extends ServiceEntityRepository
             ->select(['t', 'pa'])
             ->andWhere('t.id = :id')
             ->setParameter('id', $id)
-            ->leftJoin('t.playersAvailable', 'pa')
+            ->leftJoin('t.entrants', 'pa')
             ->orderBy('pa.firstname', 'ASC')
             ->getQuery()
             ->getOneOrNullResult();

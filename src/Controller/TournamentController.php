@@ -81,7 +81,7 @@ class TournamentController extends AbstractController
             if (!$player instanceof Player)
                 throw new UnexpectedTypeException($player, Player::class);
 
-            $tournament->addPlayersAvailable($player);
+            $tournament->addEntrant($player);
             $entityManager->persist($tournament);
 
             $entityManager->flush();
@@ -109,7 +109,7 @@ class TournamentController extends AbstractController
     #[Route('/{tournament}/player/{player}/remove', name: 'app_tournament_player_remove', methods: ['GET'])]
     public function playerRemove(Tournament $tournament, Player $player, EntityManagerInterface $entityManager): Response
     {
-        $tournament->removePlayersAvailable($player);
+        $tournament->removeEntrant($player);
         $entityManager->persist($tournament);
         $entityManager->flush();
 

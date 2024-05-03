@@ -24,7 +24,7 @@ class Player
     /**
      * @var Collection<int, Tournament>
      */
-    #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'playersAvailable')]
+    #[ORM\ManyToMany(targetEntity: Tournament::class, mappedBy: 'entrants')]
     private Collection $tournaments;
 
     #[ORM\ManyToOne(inversedBy: 'players')]
@@ -86,7 +86,7 @@ class Player
     {
         if (!$this->tournaments->contains($tournament)) {
             $this->tournaments->add($tournament);
-            $tournament->addPlayersAvailable($this);
+            $tournament->addEntrant($this);
         }
 
         return $this;
@@ -95,7 +95,7 @@ class Player
     public function removeTournament(Tournament $tournament): static
     {
         if ($this->tournaments->removeElement($tournament)) {
-            $tournament->removePlayersAvailable($this);
+            $tournament->removeEntrant($this);
         }
 
         return $this;

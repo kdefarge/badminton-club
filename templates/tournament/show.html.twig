@@ -18,17 +18,17 @@
             <tr>
                 <th>Participant</th>
                 <td>
-                    {% for playerAvailable in tournament.playersAvailable %}
-                        {{ playerAvailable.firstname }} {{ playerAvailable.lastname }}[<a href="{{ path('app_tournament_player_remove', {'tournament': tournament.id, 'player': playerAvailable.id}) }}">X</a>]<br />
+                    {% for entrant in tournament.entrants %}
+                        {{ entrant.firstname }} {{ entrant.lastname }}[<a href="{{ path('app_tournament_player_remove', {'tournament': tournament.id, 'player': entrant.id}) }}">X</a>]<br />
                     {% else %}
-                        pas de joueurs disponible
+                        pas de participant
                     {% endfor %}</td>
             </tr>
             <tr>
                 <th>Disponible</th>
                 <td>
                     {% for playerAvailable in players_available %}
-                        {{ playerAvailable.firstname }} {{ playerAvailable.lastname }}[<a href="{{ path('app_tournament_player_remove', {'tournament': tournament.id, 'player': playerAvailable.id}) }}">X</a>]<br />
+                        {{ playerAvailable.firstname }} {{ playerAvailable.lastname }}<br />
                     {% else %}
                         pas de joueurs disponible
                     {% endfor %}</td>

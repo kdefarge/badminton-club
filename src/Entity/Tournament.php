@@ -28,7 +28,7 @@ class Tournament
      * @var Collection<int, Player>
      */
     #[ORM\ManyToMany(targetEntity: Player::class, inversedBy: 'tournaments')]
-    private Collection $playersAvailable;
+    private Collection $entrants;
 
     /**
      * @var Collection<int, Encounter>
@@ -38,7 +38,7 @@ class Tournament
 
     public function __construct()
     {
-        $this->playersAvailable = new ArrayCollection();
+        $this->entrants = new ArrayCollection();
         $this->encounters = new ArrayCollection();
     }
 
@@ -86,23 +86,23 @@ class Tournament
     /**
      * @return Collection<int, Player>
      */
-    public function getPlayersAvailable(): Collection
+    public function getEntrants(): Collection
     {
-        return $this->playersAvailable;
+        return $this->entrants;
     }
 
-    public function addPlayersAvailable(Player $playersAvailable): static
+    public function addEntrant(Player $entrant): static
     {
-        if (!$this->playersAvailable->contains($playersAvailable)) {
-            $this->playersAvailable->add($playersAvailable);
+        if (!$this->entrants->contains($entrant)) {
+            $this->entrants->add($entrant);
         }
 
         return $this;
     }
 
-    public function removePlayersAvailable(Player $playersAvailable): static
+    public function removeEntrant(Player $entrant): static
     {
-        $this->playersAvailable->removeElement($playersAvailable);
+        $this->entrants->removeElement($entrant);
 
         return $this;
     }
