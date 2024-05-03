@@ -70,7 +70,7 @@ class TournamentController extends AbstractController
         $formPlayerList = $this->createForm(
             PlayerListType::class,
             null,
-            ['players' => $playerRepository->findAllNotAvailableByTournament($tournament)]
+            ['players' => $playerRepository->findAllNotEntrant($tournament)]
         );
 
         $formPlayerList->handleRequest($request);
@@ -91,6 +91,7 @@ class TournamentController extends AbstractController
 
         return $this->render('tournament/show.html.twig', [
             'tournament' => $tournament,
+            'players_available' => $playerRepository->findAllAvailable($tournament),
             'form_tournament' => $formTournamment,
             'form_player_list' => $formPlayerList,
         ]);

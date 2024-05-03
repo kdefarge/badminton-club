@@ -32,17 +32,40 @@ class PlayerRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAllNotAvailableByTournament(Tournament $tournament): array
+    public function findAllAvailable(Tournament $tournament): array
     {
+        $sub = $this->createQueryBuilder('sub_p');
+        $sub->select('sub_p.id')
+            ->join('sub_p.encounterPlayers', 'sub_ep')
+            ->join('sub_ep.encounter', 'sub_e')
+            ->join('sub_e.tournament', 'sub_t')
+            ->where('sub_t.id = :tournament_id')
+            ->andWhere('sub_e.isFinished = false')
+            ->andWhere('sub_p.id = p.id');
+
+        $qb = $this->createQueryBuilder('p');
+        return $qb->select(['p'])
+            ->join('p.tournaments', 't')
+            ->where('t.id = :tournament_id')
+            ->andWhere($qb->expr()->not($qb->expr()->exists($sub)))
+            ->setParameter('tournament_id', $tournament->getId())
+            ->orderBy('p.firstname', 'ASC')
+            ->addOrderBy('p.lastname', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllNotEntrant(Tournament $tournament): array
+    {       
         $sub = $this->createQueryBuilder('pt')
             ->select('pt.id')
             ->leftJoin('pt.tournaments', 't')
             ->where('t.id = :tournament_id')
             ->andWhere('p.id = pt.id');
-        
+
         $qb = $this->createQueryBuilder('p');
-        return $qb
-            ->select(['p'])
+
+        return $qb->select(['p'])
             ->where($qb->expr()->not($qb->expr()->exists($sub->getDQL())))
             ->setParameter('tournament_id', $tournament->getId())
             ->orderBy('p.firstname', 'ASC')

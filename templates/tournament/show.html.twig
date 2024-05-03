@@ -16,9 +16,18 @@
                 <td>{% include 'player/_list_form.html.twig' with {'button_label': 'ajouté', 'form': form_player_list} only %}</td>
             </tr>
             <tr>
-                <th>Liste des joueurs</th>
+                <th>Participant</th>
                 <td>
                     {% for playerAvailable in tournament.playersAvailable %}
+                        {{ playerAvailable.firstname }} {{ playerAvailable.lastname }}[<a href="{{ path('app_tournament_player_remove', {'tournament': tournament.id, 'player': playerAvailable.id}) }}">X</a>]<br />
+                    {% else %}
+                        pas de joueurs disponible
+                    {% endfor %}</td>
+            </tr>
+            <tr>
+                <th>Disponible</th>
+                <td>
+                    {% for playerAvailable in players_available %}
                         {{ playerAvailable.firstname }} {{ playerAvailable.lastname }}[<a href="{{ path('app_tournament_player_remove', {'tournament': tournament.id, 'player': playerAvailable.id}) }}">X</a>]<br />
                     {% else %}
                         pas de joueurs disponible
