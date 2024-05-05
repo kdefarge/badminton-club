@@ -171,7 +171,7 @@ class EncounterController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_tournament_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_tournament_show', ['id' => $encounter->getTournament()->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('encounter/score.html.twig', [

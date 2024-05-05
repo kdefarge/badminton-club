@@ -55,7 +55,7 @@ class TournamentManager
         foreach ($randKeys as $key => $randKey) {
             $encounterPlayer = new EncounterPlayer();
             $encounterPlayer->setPlayer($playersAvailable[$randKey]);
-            $encounterPlayer->setIsTeam1(($key + 1) % 1 ? true : false);
+            $encounterPlayer->setIsTeam1($key % 2 == 1);
             $encounterPlayer->setEncounter($encounter);
             $this->entityManager->persist($encounterPlayer);
         }
