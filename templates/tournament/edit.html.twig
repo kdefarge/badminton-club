@@ -41,16 +41,6 @@
                 <th>édité à</th>
                 <td>{{ tournament.updatedAt ? tournament.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
-            <tr>
-                <th>Disponible</th>
-                <td>
-                    {% for player_pair in player_pairs %}
-                        {{ player_pair.firstname }} {{ player_pair.lastname }}<br />
-                        {{ player_pair.firstname }} {{ player_pair.lastname }}<br />
-                    {% else %}
-                        pas de joueurs disponible
-                    {% endfor %}</td>
-            </tr>
         </tbody>
     </table>
 

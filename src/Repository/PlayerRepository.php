@@ -44,8 +44,10 @@ class PlayerRepository extends ServiceEntityRepository
             ->andWhere('sub_p.id = p.id');
 
         $qb = $this->createQueryBuilder('p');
-        return $qb->select(['p'])
+        return $qb->select(['p','g','s'])
             ->join('p.tournaments', 't')
+            ->leftJoin('p.gender', 'g')
+            ->leftJoin('p.skill', 's')
             ->where('t.id = :tournament_id')
             ->andWhere($qb->expr()->not($qb->expr()->exists($sub)))
             ->setParameter('tournament_id', $tournament->getId())

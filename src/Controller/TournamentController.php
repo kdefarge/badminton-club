@@ -131,4 +131,15 @@ class TournamentController extends AbstractController
 
         return $this->redirectToRoute('app_tournament_edit', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/{id}/generate', name: 'app_tournament_generate', methods: ['GET'])]
+    public function playerGenerate(
+        int $id,
+        TournamentManager $tournamentManager
+    ): Response {
+        if (!$tournamentManager->init($id))
+            return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
+        $tournamentManager->getRandomEncounter();
+        return $this->redirectToRoute('app_tournament_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+    }
 }
