@@ -24,7 +24,8 @@
                 {% endfor %}
             </td>
             <td>
-                <a href="{{ path('app_encounter_show', {'id': encounter.id}) }}">voir</a>
+                <a href="{{ path('app_encounter_show', {'id': encounter.id}) }}">voir</a> - 
+                <a href="{{ path('app_encounter_score', {'id': encounter.id}) }}">Entré score</a>
             </td>
         </tr>
     {% else %}

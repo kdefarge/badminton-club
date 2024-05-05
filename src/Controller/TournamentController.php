@@ -133,7 +133,7 @@ class TournamentController extends AbstractController
     }
 
     #[Route('/{id}/generate', name: 'app_tournament_generate', methods: ['GET'])]
-    public function playerGenerate(
+    public function generate(
         int $id,
         TournamentManager $tournamentManager
     ): Response {

@@ -35,15 +35,15 @@ class EncounterController extends AbstractController
         $entityManager->persist($encounter);
 
         $entityManager->flush();
-        
+
         return $this->redirectToRoute('app_encounter_edit', ['id' => $encounter->getId()], Response::HTTP_SEE_OTHER);
     }
-    
+
     #[Route('/{id}', name: 'app_encounter_show', methods: ['GET', 'POST'])]
     public function show(int $id, EncounterRepository $encounterRepository): Response
     {
         $encounter = $encounterRepository->findOneJoinedByID($id);
-        if(is_null($encounter))
+        if (is_null($encounter))
             return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
 
         return $this->render('encounter/show.html.twig', [
@@ -55,7 +55,7 @@ class EncounterController extends AbstractController
     public function edit(Request $request, int $id, EncounterRepository $encounterRepository, EntityManagerInterface $entityManager, ScoreRepository $scoreRepository): Response
     {
         $encounter = $encounterRepository->findOneJoinedByID($id);
-        if(is_null($encounter))
+        if (is_null($encounter))
             return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
 
         $formEncounter = $this->createForm(EncounterType::class, $encounter);
@@ -133,5 +133,50 @@ class EncounterController extends AbstractController
         $entityManager->flush();
 
         return $this->redirectToRoute('app_encounter_edit', ['id' => $encounterId], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/{id}/score', name: 'app_encounter_score', methods: ['GET', 'POST'])]
+    public function score(
+        int $id,
+        Request $request,
+        EncounterRepository $encounterRepository,
+        EntityManagerInterface $entityManager
+    ): Response {
+
+        $encounter = $encounterRepository->findOneJoinedByID($id);
+
+        if (is_null($encounter) || is_null($encounter->getTournament()))
+            return $this->redirectToRoute('app_encounter_index', [], Response::HTTP_SEE_OTHER);
+
+        if ($encounter->isFinished() || count($encounter->getScores()) > 0)
+            return $this->redirectToRoute('app_tournament_show', ['id' => $encounter->getTournament()->getId()], Response::HTTP_SEE_OTHER);
+
+        $score = new Score();
+        $formScore = $this->createForm(ScoreType::class, $score);
+        $formScore->handleRequest($request);
+
+        if ($formScore->isSubmitted() && $formScore->isValid()) {
+
+            if ($score->getScoreTeam1() == $score->getScoreTeam2())
+                return $this->redirectToRoute('app_encounter_score', ['id' => $id], Response::HTTP_SEE_OTHER);
+
+            $score->setEncounter($encounter);
+            $score->setNumber(1);
+            $entityManager->persist($score);
+
+            $encounter->setIsFinished(true);
+            $encounter->setIsTeam1Won($score->getScoreTeam1() > $score->getScoreTeam2());
+            $encounter->setUpdatedAt(date_create_immutable());
+            $entityManager->persist($encounter);
+
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_tournament_show', ['id' => $id], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->render('encounter/score.html.twig', [
+            'encounter' => $encounter,
+            'form_score' => $formScore,
+        ]);
     }
 }

@@ -52,16 +52,19 @@ class EncounterRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findOneJoinedByID($id): ?Encounter
+    public function findOneJoinedByID(int $id): ?Encounter
     {
         return $this->createQueryBuilder('e')
-            ->select(['e', 'ep', 'p', 's'])
+            ->select(['e', 'ep', 'p', 'sr', 'g', 'sk', 't'])
             ->andWhere('e.id = :id')
             ->setParameter('id', $id)
             ->leftJoin('e.encounterPlayers', 'ep')
             ->leftJoin('ep.player', 'p')
-            ->leftJoin('e.scores', 's')
-            ->orderBy('s.number', 'ASC')
+            ->leftJoin('p.gender', 'g')
+            ->leftJoin('p.skill', 'sk')
+            ->leftJoin('e.scores', 'sr')
+            ->leftJoin('e.tournament', 't')
+            ->orderBy('sr.number', 'ASC')
             ->getQuery()
             ->getOneOrNullResult();
     }
