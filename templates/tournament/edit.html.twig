@@ -3,19 +3,23 @@
 {% block title %}Tournois{% endblock %}
 
 {% block body %}
-    <h1>Tournois - déroulement</h1>
+    <h1>Tournois - configuration</h1>
 
     <table class="table">
         <tbody>
             <tr>
                 <th>Name</th>
-                <td>{{ tournament.name }}</td>
+                <td>{% include 'tournament/_form.html.twig' with {'button_label': 'édité', 'form': form_tournament} only %}</td>
+            </tr>
+            <tr>
+                <th>Ajouté un joueur</th>
+                <td>{% include 'player/_list_form.html.twig' with {'button_label': 'ajouté', 'form': form_player_list} only %}</td>
             </tr>
             <tr>
                 <th>Participant</th>
                 <td>
                     {% for entrant in tournament.entrants %}
-                        {{ entrant.firstname }} {{ entrant.lastname }}<br />
+                        {{ entrant.firstname }} {{ entrant.lastname }}[<a href="{{ path('app_tournament_player_remove', {'tournament': tournament.id, 'player': entrant.id}) }}">X</a>]<br />
                     {% else %}
                         pas de participant
                     {% endfor %}</td>
@@ -30,16 +34,6 @@
                     {% endfor %}</td>
             </tr>
             <tr>
-                <th>Rencontre</th>
-                <td>
-                    {% for encounter in encounters %}
-                        {# {{ player_pair.firstname }} {{ player_pair.lastname }}<br /> #}
-                        match n°{{ encounter.id }}
-                    {% else %}
-                        pas de rencontre
-                    {% endfor %}</td>
-            </tr>
-            <tr>
                 <th>Crée à</th>
                 <td>{{ tournament.createdAt ? tournament.createdAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
@@ -47,11 +41,23 @@
                 <th>édité à</th>
                 <td>{{ tournament.updatedAt ? tournament.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
             </tr>
+            <tr>
+                <th>Disponible</th>
+                <td>
+                    {% for player_pair in player_pairs %}
+                        {{ player_pair.firstname }} {{ player_pair.lastname }}<br />
+                        {{ player_pair.firstname }} {{ player_pair.lastname }}<br />
+                    {% else %}
+                        pas de joueurs disponible
+                    {% endfor %}</td>
+            </tr>
         </tbody>
     </table>
 
-    <a href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">éditer</a>
-    <br /><br /><br />   
-    
+
+    <a href="{{ path('app_tournament_show', {'id': tournament.id}) }}">Déroulement</a>
+    <br /><br /><br /> 
     <a href="{{ path('app_tournament_index') }}">Liste des tournois</a>
+    <br /><br /><br />   
+    <a href="{{ path('app_tournament_delete', {'id': tournament.id}) }}">Supprimer</a>
 {% endblock %}

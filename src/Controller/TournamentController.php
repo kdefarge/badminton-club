@@ -8,6 +8,7 @@ use App\Form\PlayerListType;
 use App\Form\TournamentType;
 use App\Repository\PlayerRepository;
 use App\Repository\TournamentRepository;
+use App\Service\TournamentManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\UnexpectedTypeException;
@@ -32,7 +33,7 @@ class TournamentController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_tournament_edit', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('tournament/index.html.twig', [
@@ -41,8 +42,23 @@ class TournamentController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_tournament_show', methods: ['GET', 'POST'])]
+    #[Route('/{id}', name: 'app_tournament_show', methods: ['GET'])]
     public function show(
+        int $id,
+        TournamentManager $tournamentManager
+    ): Response {
+        if (!$tournamentManager->init($id))
+            return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
+
+        return $this->render('tournament/show.html.twig', [
+            'tournament' => $tournamentManager->getTournament(),
+            'players_available' => $tournamentManager->getPlayersAvailable(),
+            'encounters' => $tournamentManager->getEncounters(),
+        ]);
+    }
+
+    #[Route('/{id}/edit', name: 'app_tournament_edit', methods: ['GET', 'POST'])]
+    public function edit(
         int $id,
         Request $request,
         EntityManagerInterface $entityManager,
@@ -64,7 +80,7 @@ class TournamentController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_tournament_edit', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
         }
 
         $formPlayerList = $this->createForm(
@@ -86,10 +102,10 @@ class TournamentController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_tournament_edit', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('tournament/show.html.twig', [
+        return $this->render('tournament/edit.html.twig', [
             'tournament' => $tournament,
             'players_available' => $playerRepository->findAllAvailable($tournament),
             'form_tournament' => $formTournamment,
@@ -113,6 +129,6 @@ class TournamentController extends AbstractController
         $entityManager->persist($tournament);
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_tournament_edit', ['id' => $tournament->getId()], Response::HTTP_SEE_OTHER);
     }
 }
