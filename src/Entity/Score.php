@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ScoreRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ScoreRepository::class)]
 class Score
@@ -15,12 +16,15 @@ class Score
     private ?int $id = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups(['list_encounter'])]
     private ?int $number = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups(['list_encounter'])]
     private ?int $scoreTeam1 = null;
 
     #[ORM\Column(type: Types::SMALLINT)]
+    #[Groups(['list_encounter'])]
     private ?int $scoreTeam2 = null;
 
     #[ORM\ManyToOne(inversedBy: 'scores')]

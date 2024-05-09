@@ -6,6 +6,7 @@ use App\Repository\PlayerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
 class Player
@@ -13,12 +14,15 @@ class Player
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_encounter'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['list_encounter'])]
     private ?string $firstname = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['list_encounter'])]
     private ?string $lastname = null;
 
     /**
@@ -28,9 +32,11 @@ class Player
     private Collection $tournaments;
 
     #[ORM\ManyToOne(inversedBy: 'players')]
+    #[Groups(['list_encounter'])]
     private ?Gender $gender = null;
 
     #[ORM\ManyToOne(inversedBy: 'players')]
+    #[Groups(['list_encounter'])]
     private ?Skill $skill = null;
 
     /**

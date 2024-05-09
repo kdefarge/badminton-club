@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\EncounterPlayerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EncounterPlayerRepository::class)]
 class EncounterPlayer
@@ -11,9 +12,11 @@ class EncounterPlayer
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_encounter'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['list_encounter'])]
     private ?bool $isTeam1 = null;
 
     #[ORM\ManyToOne(inversedBy: 'encounterPlayers')]
@@ -22,6 +25,7 @@ class EncounterPlayer
 
     #[ORM\ManyToOne(inversedBy: 'encounterPlayers')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['list_encounter'])]
     private ?Player $player = null;
 
     public function __construct()

@@ -3,6 +3,7 @@
 namespace App\Entity\Trait;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 trait IdNameTrait
 {
@@ -12,6 +13,7 @@ trait IdNameTrait
     private ?int $id = null;
 
     #[ORM\Column(name: 'name', type: 'string', length: 255, unique: true)]
+    #[Groups(['list_encounter'])]
     private ?string $name = null;
 
     public function getId(): ?int

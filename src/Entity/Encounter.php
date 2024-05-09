@@ -6,6 +6,7 @@ use App\Repository\EncounterRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: EncounterRepository::class)]
 class Encounter
@@ -13,24 +14,30 @@ class Encounter
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['list_encounter'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['list_encounter'])]
     private ?bool $isFinished = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['list_encounter'])]
     private ?bool $isTeam1Won = null;
 
     #[ORM\Column]
+    #[Groups(['list_encounter'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['list_encounter'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     /**
      * @var Collection<int, Score>
      */
     #[ORM\OneToMany(targetEntity: Score::class, mappedBy: 'encounter', orphanRemoval: true)]
+    #[Groups(['list_encounter'])]
     private Collection $scores;
 
     #[ORM\ManyToOne(inversedBy: 'encounters')]
@@ -40,6 +47,7 @@ class Encounter
      * @var Collection<int, EncounterPlayer>
      */
     #[ORM\OneToMany(targetEntity: EncounterPlayer::class, mappedBy: 'encounter', orphanRemoval: true)]
+    #[Groups(['list_encounter'])]
     private Collection $encounterPlayers;
 
     public function __construct()
