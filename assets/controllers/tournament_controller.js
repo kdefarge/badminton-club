@@ -35,7 +35,7 @@ export default class extends Controller {
                     this.affinity[player1Id][countType][player2Id]++;
                 }
                 for(const score of encounter.scores) {
-                    this.affinity[player1Id].difference =+ player1IsTeam1 ? score.scoreTeam1 : score.scoreTeam2;
+                    this.affinity[player1Id].difference =+ player1IsTeam1 ? score.scoreTeam1 - score.scoreTeam2 : score.scoreTeam2 - score.scoreTeam1;
                     this.affinity[player1Id].played =+ score.scoreTeam1 + score.scoreTeam2;
                 }
             }
