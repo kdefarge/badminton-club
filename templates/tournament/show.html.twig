@@ -1,54 +1,78 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Tournois{% endblock %}
+{% block title %}Tournois
+{% endblock %}
 
 {% block body %}
-    <h1>Tournois - déroulement</h1>
+	<h1>Tournois - déroulement</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Name</th>
-                <td>{{ tournament.name }}</td>
-            </tr>
-            <tr>
-                <th>Participant</th>
-                <td>
-                    {% for entrant in tournament.entrants %}
-                        {{ entrant.firstname }} {{ entrant.lastname }}<br />
-                    {% else %}
-                        pas de participant
-                    {% endfor %}</td>
-            </tr>
-            <tr>
-                <th>Disponible</th>
-                <td>
-                    {% for playerAvailable in players_available %}
-                        {{ playerAvailable.firstname }} {{ playerAvailable.lastname }}<br />
-                    {% else %}
-                        pas de joueurs disponible
-                    {% endfor %}</td>
-            </tr>
-            <tr>
-                <th>Crée à</th>
-                <td>{{ tournament.createdAt ? tournament.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>édité à</th>
-                <td>{{ tournament.updatedAt ? tournament.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+	<table class="table">
+		<tbody>
+			<tr>
+				<th>Name</th>
+				<td>{{ tournament.name }}</td>
+			</tr>
+			<tr>
+				<th>Participant</th>
+				<td>
+					{% for entrant in tournament.entrants %}
+						{{ entrant.firstname }}
+						{{ entrant.lastname }}<br/>
+					{% else %}
+						pas de participant
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<th>Disponible</th>
+				<td>
+					{% for playerAvailable in players_available %}
+						{{ playerAvailable.firstname }}
+						{{ playerAvailable.lastname }}<br/>
+					{% else %}
+						pas de joueurs disponible
+					{% endfor %}
+				</td>
+			</tr>
+			<tr>
+				<th>Crée à</th>
+				<td>{{ tournament.createdAt ? tournament.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+			</tr>
+			<tr>
+				<th>édité à</th>
+				<td>{{ tournament.updatedAt ? tournament.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+			</tr>
+		</tbody>
+	</table>
 
-    {% include 'encounter/_list.html.twig' %}
-    
-    <br /><br /><br /> 
+	{% include 'encounter/_list.html.twig' %}
 
-    <a href="{{ path('app_tournament_generate', {'id': tournament.id}) }}">généré</a>
-    <br /><br /><br /> 
+	<br/><br/><br/>
 
-    <a href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">éditer</a>
-    <br /><br /><br />   
-    
-    <a href="{{ path('app_tournament_index') }}">Liste des tournois</a>
+	<a href="{{ path('app_tournament_generate', {'id': tournament.id}) }}">généré</a>
+	<br/><br/><br/>
+
+	<a href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">éditer</a>
+	<br/><br/><br/>
+
+	<a href="{{ path('app_tournament_index') }}">Liste des tournois</a>
+	<br/>
+
+	{% for pa in affinity %}
+		{{ pa[2] }} | 
+		{{ pa[3] }}<br/>
+	{% else %}
+		pas de participant
+	{% endfor %}
+	<br/>
+	{% for pa in affinity_v2 %}
+		{{ pa.played }} | 
+		{{ pa.difference }} | 
+		{{ pa.available ? 'OUI' : 'NON' }} | 
+		{{ pa.player.firstname }} | 
+		{{ pa.player.lastname }}
+		<br/>
+	{% else %}
+		pas de participant
+	{% endfor %}
 {% endblock %}

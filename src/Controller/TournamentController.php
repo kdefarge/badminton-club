@@ -52,8 +52,10 @@ class TournamentController extends AbstractController
 
         return $this->render('tournament/show.html.twig', [
             'tournament' => $tournamentManager->getTournament(),
-            'players_available' => $tournamentManager->getPlayersAvailable(),
             'encounters' => $tournamentManager->getEncounters(),
+            'affinity' => $tournamentManager->generation(),
+            'affinity_v2' => $tournamentManager->generationV2(),
+            'players_available' => $tournamentManager->getPlayersAvailable(),
         ]);
     }
 
